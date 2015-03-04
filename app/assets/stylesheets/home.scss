@@ -1,0 +1,47 @@
+// Place all the styles related to the home controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+$dark-red: #550A00;
+$dark-blue: #2C4861;
+$bright-green: #62E062;
+$main: #E3E6E8;
+
+body {
+    background: $main !important;
+    * {
+        padding: 0;
+        margin: 0;
+    }
+}
+
+.glyphicon {
+    &:hover {
+        cursor:pointer;
+    }
+    &.glyphicon-plus {
+        color: $bright-green;
+    }
+    &.glyphicon-remove {
+        margin-left: 5px;
+        color: $dark-red;
+    }
+}
+
+.lane {
+    .cardForm {
+        margin-bottom: 3px;
+    }
+
+    >h1 {
+        color: $dark-blue;
+    }
+
+    ul {
+        list-style-type: none;
+
+        li {
+            margin-bottom: 3px;
+        }
+    }
+}
