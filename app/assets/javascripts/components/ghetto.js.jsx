@@ -44,7 +44,7 @@ var Lane = React.createClass({
             this.loadLane();
         }.bind(this), function (xhr) {
             var errors = $.parseJSON(xhr.responseText).errors;
-            this.refs.flash.addFlash("danger", errors);
+            this.refs.flash.addFlash("danger", errors, 1500);
         }.bind(this));
     },
 
@@ -52,13 +52,21 @@ var Lane = React.createClass({
         this.loadLane();
     },
 
+    laneRemovalHandler: function (){
+        this.props.laneRemovalHandler(this.props.lane_id);
+    },
+
     render: function () {
         return (
-            <div className="lane col-md-4">
-                <h1>{this.props.name}</h1>
-                <CardAdder handleAddCard={this.handleAddCard} />
-                <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
-                <FlashMessages ref="flash"/>
+            <div className="lane col-xs-4">
+                <div className="col-xs-10 col-xs-offset-1">
+                    <span onClick={this.laneRemovalHandler} className="lane-close glyphicon glyphicon-remove"></span>
+                    <h1>{this.props.name}</h1>
+                    <hr />
+                    <CardAdder handleAddCard={this.handleAddCard} />
+                    <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
+                    <FlashMessages ref="flash"/>
+                </div>
             </div>
         );
     }
@@ -84,11 +92,22 @@ var Board = React.createClass({
         this.loadLanes();
     },
 
+    laneRemovalHandler: function (laneID){
+        var url = this.props.url + '/' + laneID;
+        var ajax = $.ajax({ url: url, type: 'DELETE' })
+        .then(function () {
+            this.loadLanes();
+        }.bind(this), function(xhr, status, err) {
+            console.log(xhr, status, err.toString());
+        });
+    },
+
+
     render: function () {
         var elements = this.state.lanes.map(function (lane) {
             var url=this.props.url + "/" + lane.id
             return (
-                <Lane name={lane.name} key={lane.id} url={url}>
+                <Lane laneRemovalHandler={this.laneRemovalHandler} name={lane.name} key={lane.id} lane_id={lane.id} url={url}>
                 </Lane>
             );
         }.bind(this));

@@ -6,13 +6,20 @@ $dark-red: #550A00;
 $dark-blue: #2C4861;
 $bright-green: #62E062;
 $main: #E3E6E8;
+$baby-blue: #4FD5D6;
+$ocean-blue: #1C6BA0;
+$muted-red: #ff4040;
 
 body {
-    background: $main !important;
+    background: $ocean-blue !important;
     * {
         padding: 0;
         margin: 0;
     }
+}
+
+.container {
+    margin: auto !important;
 }
 
 .glyphicon {
@@ -21,23 +28,73 @@ body {
     }
     &.glyphicon-plus {
         color: $bright-green;
+        margin-bottom: 15px !important;
     }
     &.glyphicon-remove {
         margin-left: 5px;
         color: $dark-red;
+        font-size: 10px;
+        &:hover {
+            font-size: 11px;
+        }
     }
 }
 
 .lane {
+    padding: 0 !important;
+
     .cardForm {
-        margin-bottom: 3px;
+        margin-bottom: 25px;
     }
 
-    >h1 {
+    >div {
+        position: relative;
+        background: $main;
+        padding: 10px !important;
+        margin: 5px !important;
+        border-radius: 5px; 
+        -moz-border-radius: 5px; 
+        -webkit-border-radius: 5px; 
+        border: 2px solid #800000;
+        border-color: #9ecaed;
+        box-shadow: 0 0 10px #9ecaed;
+        
+        min-height: 350px;
+        max-height: 350px;
+        overflow: auto;
+
+        .lane-close {
+            font-size: 6px;
+            color: gray;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            &:hover {
+                font-size: 6px;
+            }
+        }
+    }
+
+    h1 {
+        font-family: 'Raleway', sans-serif;
         color: $dark-blue;
+        text-align: center;
     }
 
-    ul {
+    hr {
+        border: 0;
+        height: 1px;
+        background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+        background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+        background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+        background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
+    }
+
+    input[type="text"] {
+        width: 90%;
+    }
+
+    ul.todoList {
         list-style-type: none;
 
         li {

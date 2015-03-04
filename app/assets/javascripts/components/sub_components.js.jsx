@@ -74,7 +74,7 @@ var CardForm = React.createClass({
 
 var CardAdder = React.createClass({
     getInitialState: function (){
-        return {form: false};
+        return {forms: []};
     },
 
     handleAddCard: function (){
@@ -97,7 +97,10 @@ var CardAdder = React.createClass({
     render: function () {
         if (this.state.form) {
             return (
+                <div>
+                <span className="glyphicon glyphicon-plus" onClick={this.addForm}></span>
                 <CardForm cancelHandler={this.cancelHandler} submitHandler={this.submitHandler}/>
+                </div>
             );
         } else {
             return (

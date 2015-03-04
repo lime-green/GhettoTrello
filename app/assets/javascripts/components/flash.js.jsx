@@ -42,4 +42,3 @@ var FlashMessages = React.createClass({
         return "alert alert-" + type;
     }
 });
-

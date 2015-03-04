@@ -24,7 +24,7 @@ class CardsController < ApplicationController
         if card.update_attributes(card_params)
             respond_with card.lane
         else
-            respond_with({ :errors => card.errors.full_messages }, :status => 422, :location => nil)
+            render json: { :errors => card.errors.full_messages }, :status => 422, :location => nil
         end
     end
 
