@@ -64,33 +64,47 @@ body {
     }
 }
 
-input[type="text"] {
-    @include changePHcolor($input-text);
+.eleBody, #disabled  {
+    input[type="text"] {
+        @include changePHcolor($input-text);
 
-    padding-left: 10px !important;
-    margin-left: 10px;
-    width: 85%;
-    + span {
-        width: 5%;
-        text-align: right;
+        padding-left: 10px !important;
+        margin-left: 10px;
+        width: 85%;
+        + span {
+            width: 5%;
+            text-align: right;
+        }
+        padding: 4px;
+
+        border-radius: 10px; 
+        -moz-border-radius: 10px; 
+        -webkit-border-radius: 10px; 
+        border: 2px solid $ocean-blue;
+        box-shadow: 1px 2px 2px 2px $mycolor;
+        background: $ocean-blue;
+        color: white;
+        &:focus {
+            outline: 0;
+            border: 2px solid $mycolor;
+        }
     }
-    padding: 4px;
+}
 
-    border-radius: 10px; 
-    -moz-border-radius: 10px; 
-    -webkit-border-radius: 10px; 
-    border: 2px solid $ocean-blue;
-    box-shadow: 1px 2px 2px 2px $mycolor;
-    background: $ocean-blue;
-    color: white;
-    &:focus {
-        outline: 0;
-        border: 2px solid $mycolor;
+.eleHead {
+    h1 {
+        input[type="text"] {
+            background: $mycolor;
+            outline: 0;
+            border: none;
+            width: 100%;
+            text-align: center;
+        }
     }
 }
 
 .cardForm {
-    input {
+    input[type="text"] {
         $mycolor: gray;
         background: $mycolor;
         border: 2px solid $mycolor;
@@ -252,4 +266,9 @@ input[type="text"] {
     font-size:14pt;
     padding:25px;
     text-align: center;
+}
+
+.alert.alert-danger {
+    background-color: $mycolor;
+    color: white;
 }

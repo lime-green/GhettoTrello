@@ -68,12 +68,19 @@ var Lane = React.createClass({
         this.props.laneRemovalHandler(this.props.lane_id);
     },
 
+    handleOnKeyUp: function (event){
+        if (event.which == 13 || event.keyCode == 13) {
+            this.refs.input.getDOMNode().blur();
+            this.props.laneEditHandler(this.props.lane_id, event.target.value);
+        }
+    },
+
     render: function () {
         return (
             <div className="lane">
                 <div className="eleHead">
                     <span onClick={this.laneRemovalHandler} className="lane-close glyphicon glyphicon-remove"></span>
-                    <h1>{this.props.name}</h1>
+                    <h1><input ref="input" onKeyUp={this.handleOnKeyUp} type="text" defaultValue={this.props.name} /></h1>
                 </div>
                 <div className="eleBody">
                     <CardAdder handleAddCard={this.handleAddCard} />
@@ -90,6 +97,10 @@ var Board = React.createClass({
         return {
             lanes: []
         };
+    },
+
+    componentDidMount: function (){
+        this.loadLanes();
     },
 
     loadLanes: function (){
@@ -117,10 +128,6 @@ var Board = React.createClass({
             }.bind(this));
     },
 
-    componentDidMount: function (){
-        this.loadLanes();
-    },
-
     laneRemovalHandler: function (laneID){
         var lanes = this.state.lanes,
             newlanes = _.without(lanes, _.find(lanes, function(lane){return lane.id == laneID;}));
@@ -135,24 +142,36 @@ var Board = React.createClass({
         });
     },
 
+    laneEditHandler: function (laneID, name){
+        var url = this.props.url + '/' + laneID;
+        var ajax = $.ajax({ url: url, type: 'PATCH', data: {"lane[name]": name} })
+        .then(function () {
+            this.loadLanes();
+        }.bind(this), function (xhr) {
+            var errors = $.parseJSON(xhr.responseText).errors;
+            this.refs.flash.addFlash("danger", errors, 2500);
+            this.refs.flash.getDOMNode().focus();
+        }.bind(this));
+    },
+
     render: function () {
         var elements = this.state.lanes.map(function (lane) {
             var url=this.props.url + "/" + lane.id
             var checkCards = lane.id === "null" ? "false" : "true";
             return (
-                <Lane laneRemovalHandler={this.laneRemovalHandler} name={lane.name} key={lane.id} lane_id={lane.id} url={url} checkCards={checkCards}>
+                <Lane laneEditHandler={this.laneEditHandler} laneRemovalHandler={this.laneRemovalHandler} name={lane.name} key={lane.id} lane_id={lane.id} url={url} checkCards={checkCards}>
                 </Lane>
             );
         }.bind(this));
 
         return (
             <div className="boardWrap">
+                <div className="boardFlash">
+                    <FlashMessages ref="flash"/>
+                </div>
                 <div className="board">
                     {elements}
                     <GhostLane handleAddLane={this.handleAddLane} />
-                </div>
-                <div className="boardFlash">
-                    <FlashMessages ref="flash"/>
                 </div>
             </div>
         );

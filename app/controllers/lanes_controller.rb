@@ -21,9 +21,10 @@ class LanesController < ApplicationController
 
     def update
         lane = lane_find
-        if lane
-            lane.update_attributes(lane_params)
+        if lane.update_attributes(lane_params)
             head :no_content
+        else
+            render json: { :errors => lane.errors.full_messages }, :status => 422, :location => nil
         end
     end
 
