@@ -48,10 +48,6 @@ var ElementControl = React.createClass({
 });
 
 var CardForm = React.createClass({
-    cancelHandler: function () {
-       this.props.cancelHandler(); 
-    },
-
     componentDidMount: function () {
         this.refs.input.getDOMNode().focus();
     },
@@ -59,6 +55,7 @@ var CardForm = React.createClass({
     handleKeyUp: function(event) {
         if (event.which == 13 || event.keyCode == 13) {
             this.props.submitHandler(this.refs.input.getDOMNode().value);
+            this.refs.input.getDOMNode().value = "";
         }
     },
 
@@ -66,46 +63,23 @@ var CardForm = React.createClass({
         return (
             <div className="cardForm">
                 <input onKeyUp={this.handleKeyUp} name="cardContent" ref="input" type="text" placeholder="Enter to-do element" />
-                <span onClick={this.cancelHandler} className="glyphicon glyphicon-remove"></span>
             </div>
         );
     }
 });
 
 var CardAdder = React.createClass({
-    getInitialState: function (){
-        return {forms: []};
-    },
-
     handleAddCard: function (){
         this.props.handleAddCard();
     },
 
     submitHandler: function (content){
         this.props.handleAddCard(content);
-        this.setState({form: false});
-    },
-
-    cancelHandler: function () {
-        this.setState({form: false});
-    },
-
-    addForm: function () {
-        this.setState({form: true});
     },
 
     render: function () {
-        if (this.state.form) {
-            return (
-                <div>
-                <span className="glyphicon glyphicon-plus" onClick={this.addForm}></span>
-                <CardForm cancelHandler={this.cancelHandler} submitHandler={this.submitHandler}/>
-                </div>
-            );
-        } else {
-            return (
-                <span className="glyphicon glyphicon-plus" onClick={this.addForm}></span>
-            );
-        }
+        return (
+            <CardForm submitHandler={this.submitHandler}/>
+        );
     }
 });

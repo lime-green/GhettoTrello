@@ -8,6 +8,9 @@ var Lane = React.createClass({
     },
 
     loadLane: function (){
+        if (this.props.checkCards === "false") {
+            return;
+        }
         var ajax = $.get(this.props.url)
             .then(function (data) {
                 this.setState({cards: data.cards});
@@ -17,6 +20,10 @@ var Lane = React.createClass({
     },
 
     handleControl: function(cardID){
+        var cards = this.state.cards,
+            newcards = _.without(cards, _.find(cards, function(card){return card.id == cardID;}));
+        this.setState({cards: newcards});
+
         var url = this.props.url + '/cards/' + cardID;
         var ajax = $.ajax({ url: url, type: 'DELETE' })
         .then(function () {
@@ -27,13 +34,18 @@ var Lane = React.createClass({
     },
 
     handleAddCard: function(content) {
-        var url = this.props.url + '/cards';
-        var ajax = $.ajax({ url: url, type: 'POST', data: {"card[content]": content} })
+        var cards = this.state.cards,
+            newcards = cards.concat([{id: "null", content: content}]);
+        this.setState({cards: newcards}); // such optimism! much speed! so fast!
+
+        var url = this.props.url + '/cards',
+            ajax = $.ajax({ url: url, type: 'POST', data: {"card[content]": content} })
         .then(function () {
             this.loadLane();
         }.bind(this), function (xhr) {
             var errors = $.parseJSON(xhr.responseText).errors;
-            this.refs.flash.addFlash("danger", errors, 1500);
+            this.loadLane();
+            this.refs.flash.addFlash("danger", errors, 2500);
         }.bind(this));
     },
 
@@ -44,7 +56,7 @@ var Lane = React.createClass({
             this.loadLane();
         }.bind(this), function (xhr) {
             var errors = $.parseJSON(xhr.responseText).errors;
-            this.refs.flash.addFlash("danger", errors, 1500);
+            this.refs.flash.addFlash("danger", errors, 2500);
         }.bind(this));
     },
 
@@ -58,15 +70,84 @@ var Lane = React.createClass({
 
     render: function () {
         return (
-            <div className="lane col-xs-4">
-                <div className="col-xs-10 col-xs-offset-1">
+            <LaneWrap>
+                <div className="eleHead">
                     <span onClick={this.laneRemovalHandler} className="lane-close glyphicon glyphicon-remove"></span>
                     <h1>{this.props.name}</h1>
                     <hr />
-                    <CardAdder handleAddCard={this.handleAddCard} />
-                    <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
-                    <FlashMessages ref="flash"/>
                 </div>
+                <CardAdder handleAddCard={this.handleAddCard} />
+                <FlashMessages ref="flash"/>
+                <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
+            </LaneWrap>
+        );
+    }
+});
+
+var LaneWrap = React.createClass({
+    render: function (){
+        return (
+            <div className="lane col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                <div className="col-*-10 col-*-offset-1">
+                    {this.props.children}
+                </div>
+            </div>
+        );
+    }
+});
+
+var GhostForm = React.createClass({
+    componentDidMount: function (){
+        this.refs.input.getDOMNode().focus();
+    },
+
+    handleOnKeyUp: function (event){
+        if (event.which == 13 || event.keyCode == 13) {
+            this.props.handleOnKeyUp(event.target.value);
+        }
+    },
+
+    render: function (){
+        return (
+            <input ref="input" type="text" onKeyUp={this.handleOnKeyUp} placeholder="Enter a name for your lane" />
+        );
+    }
+});
+
+var GhostLane = React.createClass({
+    getInitialState: function (){
+        return {
+            element:
+                <span onClick={this.handleOnClick} className="glyphicon glyphicon-plus" />
+        };
+    },
+
+    handleOnKeyUp: function (name){
+        this.setToPlus();
+        this.props.handleAddLane(name);
+    },
+
+    handleOnClick: function (){
+        this.setToInput();
+    },
+
+    setToInput: function (){
+        this.setState({
+            element:
+                <GhostForm handleOnKeyUp={this.handleOnKeyUp} />
+        });
+    },
+
+    setToPlus: function (){
+        this.setState(this.getInitialState());
+    },
+
+    render: function (){
+        return (
+            <div id="disabled">
+                <LaneWrap>
+                    {this.state.element}
+                </LaneWrap>
             </div>
         );
     }
@@ -88,13 +169,33 @@ var Board = React.createClass({
             }.bind(this));
     },
 
+    handleAddLane: function (name){
+        var lanes = this.state.lanes,
+            newlanes = lanes.concat([{id: "null", name: name}]);
+        this.setState({lanes: newlanes}); // such optimism! much speed! so fast!
+
+        var ajax = $.post(this.props.url, {"lane[name]": name})
+            .then(function () {
+                this.loadLanes();
+            }.bind(this), function(xhr, status, err) {
+                var errors = $.parseJSON(xhr.responseText).errors;
+                this.loadLanes();
+                this.refs.flash.addFlash("danger", errors, 2500);
+                this.refs.flash.getDOMNode().focus(); // scroll down
+            }.bind(this));
+    },
+
     componentDidMount: function (){
         this.loadLanes();
     },
 
     laneRemovalHandler: function (laneID){
-        var url = this.props.url + '/' + laneID;
-        var ajax = $.ajax({ url: url, type: 'DELETE' })
+        var lanes = this.state.lanes,
+            newlanes = _.without(lanes, _.find(lanes, function(lane){return lane.id == laneID;}));
+        this.setState({lanes: newlanes}); // optimism! speed! fast!
+
+        var url = this.props.url + '/' + laneID,
+            ajax = $.ajax({ url: url, type: 'DELETE' })
         .then(function () {
             this.loadLanes();
         }.bind(this), function(xhr, status, err) {
@@ -102,19 +203,25 @@ var Board = React.createClass({
         });
     },
 
-
     render: function () {
         var elements = this.state.lanes.map(function (lane) {
             var url=this.props.url + "/" + lane.id
+            var checkCards = lane.id === "null" ? "false" : "true";
             return (
-                <Lane laneRemovalHandler={this.laneRemovalHandler} name={lane.name} key={lane.id} lane_id={lane.id} url={url}>
+                <Lane laneRemovalHandler={this.laneRemovalHandler} name={lane.name} key={lane.id} lane_id={lane.id} url={url} checkCards={checkCards}>
                 </Lane>
             );
         }.bind(this));
 
         return (
-            <div className="board">
-                {elements}
+            <div className="boardWrap">
+                <div className="board">
+                    {elements}
+                    <GhostLane handleAddLane={this.handleAddLane} />
+                </div>
+                <div className="boardFlash">
+                    <FlashMessages ref="flash"/>
+                </div>
             </div>
         );
     }

@@ -20,7 +20,7 @@ var FlashMessages = React.createClass({
 
     render: function (){
         return (
-            <div className="flashMessages">
+            <div tabIndex="-1" className="flashMessages">
                 {this.state.flashes.map(function(message, index) {
                     return (
                         <div key={index} className={this.getClass(message.alertType)}>

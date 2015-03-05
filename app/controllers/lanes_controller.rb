@@ -10,6 +10,8 @@ class LanesController < ApplicationController
         lane = Lane.new lane_params
         if lane.save
             respond_with lane, :include => :cards
+        else
+            respond_with({ :errors => lane.errors.full_messages }, :status => 422, :location => nil)
         end
     end
 
