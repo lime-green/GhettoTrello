@@ -1,6 +1,14 @@
 var GhostForm = React.createClass({
     componentDidMount: function (){
         this.refs.input.getDOMNode().focus();
+
+        $(this.getDOMNode()).focusout(function() {
+            this.handleUnFocus();
+        }.bind(this));
+    },
+
+    handleUnFocus: function (){
+        this.props.handleUnFocus();
     },
 
     handleOnKeyUp: function (event){
@@ -33,10 +41,14 @@ var GhostLane = React.createClass({
         this.setToInput();
     },
 
+    handleUnFocus: function (){
+        this.setToPlus();
+    },
+
     setToInput: function (){
         this.setState({
             element:
-                <GhostForm handleOnKeyUp={this.handleOnKeyUp} />
+                <GhostForm handleUnFocus={this.handleUnFocus} handleOnKeyUp={this.handleOnKeyUp} />
         });
     },
 
@@ -47,9 +59,9 @@ var GhostLane = React.createClass({
     render: function (){
         return (
             <div id="disabled">
-                <LaneWrap>
+                <div className="lane">
                     {this.state.element}
-                </LaneWrap>
+                </div>
             </div>
         );
     }

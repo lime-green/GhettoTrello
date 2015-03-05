@@ -70,84 +70,16 @@ var Lane = React.createClass({
 
     render: function () {
         return (
-            <LaneWrap>
+            <div className="lane">
                 <div className="eleHead">
                     <span onClick={this.laneRemovalHandler} className="lane-close glyphicon glyphicon-remove"></span>
                     <h1>{this.props.name}</h1>
-                    <hr />
                 </div>
-                <CardAdder handleAddCard={this.handleAddCard} />
-                <FlashMessages ref="flash"/>
-                <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
-            </LaneWrap>
-        );
-    }
-});
-
-var LaneWrap = React.createClass({
-    render: function (){
-        return (
-            <div className="lane col-xs-6 col-sm-4 col-md-3 col-lg-2">
-                <div className="col-*-10 col-*-offset-1">
-                    {this.props.children}
+                <div className="eleBody">
+                    <CardAdder handleAddCard={this.handleAddCard} />
+                    <FlashMessages ref="flash"/>
+                    <TodoList handleContentEdit={this.handleContentEdit} data={this.state.cards} handleControl={this.handleControl} />
                 </div>
-            </div>
-        );
-    }
-});
-
-var GhostForm = React.createClass({
-    componentDidMount: function (){
-        this.refs.input.getDOMNode().focus();
-    },
-
-    handleOnKeyUp: function (event){
-        if (event.which == 13 || event.keyCode == 13) {
-            this.props.handleOnKeyUp(event.target.value);
-        }
-    },
-
-    render: function (){
-        return (
-            <input ref="input" type="text" onKeyUp={this.handleOnKeyUp} placeholder="Enter a name for your lane" />
-        );
-    }
-});
-
-var GhostLane = React.createClass({
-    getInitialState: function (){
-        return {
-            element:
-                <span onClick={this.handleOnClick} className="glyphicon glyphicon-plus" />
-        };
-    },
-
-    handleOnKeyUp: function (name){
-        this.setToPlus();
-        this.props.handleAddLane(name);
-    },
-
-    handleOnClick: function (){
-        this.setToInput();
-    },
-
-    setToInput: function (){
-        this.setState({
-            element:
-                <GhostForm handleOnKeyUp={this.handleOnKeyUp} />
-        });
-    },
-
-    setToPlus: function (){
-        this.setState(this.getInitialState());
-    },
-
-    render: function (){
-        return (
-            <div id="disabled">
-                <LaneWrap>
-                    {this.state.element}
-                </LaneWrap>
             </div>
         );
     }

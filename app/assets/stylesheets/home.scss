@@ -5,12 +5,32 @@
 $dark-red: #550A00;
 $dark-blue: #2C4861;
 $bright-green: #62E062;
-$main: #E3E6E8;
+$main: #B3B3B3;
 $baby-blue: #4FD5D6;
 $ocean-blue: #1C6BA0;
 $muted-red: #ff4040;
 $input-text: white;
 $red: #CD0000;
+$strong-gray: #303030;
+$pastelle-green: #57A639;
+$mycolor: #474747;
+
+@mixin changePHcolor($someColor) {
+    &::-webkit-input-placeholder { /* WebKit browsers */
+        color:    $someColor;
+    }
+    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+        color:    $someColor;
+        opacity:  1;
+    }
+    &::-moz-placeholder { /* Mozilla Firefox 19+ */
+        color:    $someColor;
+        opacity:  1;
+    }
+    &:-ms-input-placeholder { /* Internet Explorer 10+ */
+        color:    $someColor;
+    }
+}
 
 body {
     background: $ocean-blue !important;
@@ -34,6 +54,7 @@ body {
         text-shadow: 4px 4px 6px rgba(52, 114, 42, 1);
     }
     &.glyphicon-remove {
+        padding-right: 5px;
         margin-left: 5px;
         color: $red;
         font-size: 10px;
@@ -44,24 +65,14 @@ body {
 }
 
 input[type="text"] {
-    width: 90%;
+    @include changePHcolor($input-text);
+
+    padding-left: 10px !important;
+    margin-left: 10px;
+    width: 85%;
     + span {
         width: 5%;
         text-align: right;
-    }
-    &::-webkit-input-placeholder { /* WebKit browsers */
-        color:    $input-text;
-    }
-    &:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-        color:    $input-text;
-        opacity:  1;
-    }
-    &::-moz-placeholder { /* Mozilla Firefox 19+ */
-        color:    $input-text;
-        opacity:  1;
-    }
-    &:-ms-input-placeholder { /* Internet Explorer 10+ */
-        color:    $input-text;
     }
     padding: 4px;
 
@@ -69,12 +80,12 @@ input[type="text"] {
     -moz-border-radius: 10px; 
     -webkit-border-radius: 10px; 
     border: 2px solid $ocean-blue;
-    box-shadow: 1px 2px 2px 2px #949494;
+    box-shadow: 1px 2px 2px 2px $mycolor;
     background: $ocean-blue;
     color: white;
     &:focus {
         outline: 0;
-        border: 2px solid white;
+        border: 2px solid $mycolor;
     }
 }
 
@@ -88,34 +99,81 @@ input[type="text"] {
 }
 
 #disabled {
-    .lane > div {
+    .lane {
+        input {
+            @include changePHcolor($strong-gray);
+            color: $strong-gray;
+            margin: 0;
+            box-shadow: none;
+            border: none;
+            background: $main;
+            padding-left: 20px;
+            border-color: black;
+            border: 2px solid $strong-gray;
+            &:focus {
+                border-color: white;
+            }
+        }
         border-radius: 5px; 
         -moz-border-radius: 5px; 
         -webkit-border-radius: 5px; 
-        border: 2px solid #800000;
-        border-color: #9ecaed;
-        box-shadow: 1px 2px 15px 1px #9ecaed;
+        //border: 1px solid #800000;
+        //border-color: #9ecaed;
 
         display: flex;
-        background: #909090;
+        background: #474747;
         align-items: center;
         justify-content: center;
         .glyphicon-plus {
             font-size: 65px;
             &:hover {
+                color: $pastelle-green;
             }
         }
     }
 }
-.lane {
-    padding: 0 !important;
-    margin-bottom: 20px;
 
-    .cardForm {
-        margin-bottom: 25px;
-    }
+.board {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
 
-    div[class*="offset"] {
+    .lane {
+        min-width: 250px;
+        max-width: 250px;
+
+        .alert {
+            margin: 10px;
+        }
+        .cardForm {
+            margin-bottom: 25px;
+        }
+
+        .eleHead {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: $mycolor;
+            padding-bottom: 30px;
+
+            border-radius: 1px; 
+            -moz-border-radius: 1px; 
+            -webkit-border-radius: 1px; 
+            box-shadow: 0 2px 5px $mycolor;
+        }
+
+        .eleBody {
+            margin-top: 120px;
+        }
+
+        ul.todoList {
+            list-style-type: none;
+            li {
+                margin-bottom: 8px;
+            }
+        }
+
         position: relative;
         background: $main;
         padding: 10px !important;
@@ -123,17 +181,17 @@ input[type="text"] {
         border-radius: 5px; 
         -moz-border-radius: 5px; 
         -webkit-border-radius: 5px; 
-        border: 2px solid #800000;
-        border-color: #9ecaed;
-        box-shadow: 0 0 10px #9ecaed;
-        
+        border: 0.5px solid $mycolor;
+        //border-color: #9ecaed;
+        box-shadow: 1px 1px 15px 2px $mycolor;
+
         min-height: 350px;
         max-height: 350px;
         overflow: auto;
 
         .lane-close {
             font-size: 10px;
-            color: gray;
+            color: white;
             position: absolute;
             top: 2px;
             right: 2px;
@@ -141,29 +199,15 @@ input[type="text"] {
                 font-size: 10px;
             }
         }
-    }
 
-    h1 {
-        font-family: 'Raleway', sans-serif;
-        color: $dark-blue;
-        text-align: center;
-    }
-
-    hr {
-        border: 0;
-        height: 1px;
-        background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
-        background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
-        background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
-        background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0));
-    }
-
-    ul.todoList {
-        list-style-type: none;
-
-        li {
-            margin-bottom: 5px;
+        h1 {
+            font-family: 'Raleway', sans-serif;
+            color: white;
+            text-align: center;
         }
+
+        margin-bottom: 30px !important;
+        padding: 0 !important;
     }
 }
 
@@ -184,23 +228,28 @@ input[type="text"] {
 }
 
 .wide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100px;
-    background: #303030;
-    border-bottom: 2px solid #303030;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 2px 2px #303030;
+    background: $strong-gray;
+    border-bottom: 2px solid $strong-gray;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 2px 2px $strong-gray;
 }
 .logo {
+    margin-top: 10px;
     h1 {
+        font-size: 50px;
+        margin-top: 5px;
         font-family: 'Droid Serif', serif;
         font-weight: bold;
-        text-shadow: 1px 2px 5px black;
-        
+        font-style: italic;
     }
     color:#fff;
     font-weight:800;
     font-size:14pt;
     padding:25px;
-    text-align:center;
+    text-align: center;
 }
